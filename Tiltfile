@@ -1,3 +1,8 @@
+# Confirm the kubernetes context for deployment
+if k8s_context() == 'prod':
+  fail("failing early to avoid overwriting prod")
+
+
 # microservice image name and parent path of Dockerfile
 docker_build('weaveworksdemos/front-end','front-end')
 
@@ -5,7 +10,7 @@ docker_build('weaveworksdemos/front-end','front-end')
 k8s_yaml('microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml')
 
 # Pause tilt 
-#k8s_resource('front-end', trigger_mode=TRIGGER_MODE_MANUAL)
+k8s_resource('front-end', trigger_mode=TRIGGER_MODE_MANUAL, port_forwards=9000)
 
 
 # microservice-orders image name and parent path of Dockerfile
@@ -20,5 +25,4 @@ k8s_yaml('microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml')
 
 #running rest of the microservices using a single file
 k8s_yaml('microservices-demo/deploy/kubernetes/complete-demo.yaml')
-
 

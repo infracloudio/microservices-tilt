@@ -26,12 +26,22 @@ Considering we have multiple microservices checked out in different directories 
 
   # kubernetes resourses which tilt would build-deploy
   k8s_yaml('microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml')
-  # k8s_yaml('microservices-demo/deploy/kubernetes/manifests/front-end-svc.yaml')
 
   #running rest of the microservices using a single file
-  k8s_yaml('microservices-demo/deploy/kubernetes/complete-demo.yaml') 
+  k8s_yaml('microservices-demo/deploy/kubernetes/complete-demo.yaml')
+
+  # Pause tilt 
+  #k8s_resource('front-end', trigger_mode=TRIGGER_MODE_MANUAL)
+
+
   ```
   
+   * Tiltfile Fuctions:
+      * docker_build('weaveworksdemos/front-end','front-end') : This function is alternative to `# docker build -t weaveworksdemos/frontend ./frontend`.
+      * k8s_yaml('microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml') : This function accepts `kubernetes resource file` as a parameter which is a yaml file. This function can be called multiple times in the Tiltfile. This this function gets executed, `kubectl create/delete -f <k8s-resource.yaml>` command runs behind the scenes by Tilt. 
+      * k8s_resource('front-end', trigger_mode=TRIGGER_MODE_MANUAL) : By default when the tilt is running, it watches for any file changes made in the workspace files and at every file save tilt starts build/deploy process which can cause unncecessary build triggers. So to avoid this developer can use the function and set the `trigger_mode=TRIGGER_MODE_MANUAL`. We can set `port_forwards` value in the function to access the k8s resource on localhost port.
+
+
 
 
  * Tilt commands:
